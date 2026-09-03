@@ -1,0 +1,78 @@
+prerequisite-gap-diagnoser/
+├── AGENTS.md
+├── CLAUDE.md
+├── README.md
+├── .gitignore
+├── .env.example
+│
+├── .github/
+│   └── copilot-instructions.md
+│
+├── docs/
+│   ├── prd.md
+│   ├── architecture.md
+│   ├── rules.md
+│   ├── phases.md
+│   ├── design.md
+│   └── memory.md
+│
+├── backend/
+│   ├── pyproject.toml              # or requirements.txt
+│   ├── .env                        # ANTHROPIC_API_KEY etc. — gitignored
+│   ├── app/
+│   │   ├── main.py                 # FastAPI app entrypoint
+│   │   ├── config.py                # env var loading
+│   │   ├── models/
+│   │   │   ├── schemas.py           # Pydantic request/response models
+│   │   │   └── db_models.py         # SQLite table models
+│   │   ├── graph/
+│   │   │   ├── concept_graph.json   # the frozen 20–25 node graph
+│   │   │   └── loader.py            # loads + validates graph at startup
+│   │   ├── engine/
+│   │   │   ├── state_machine.py     # PRESENT_PROBLEM → ... → RESOLVED
+│   │   │   ├── traversal.py         # bounded backward BFS
+│   │   │   └── llm_calls.py         # the 3 structured Claude API calls
+│   │   ├── prompts/
+│   │   │   ├── probing_question.md
+│   │   │   ├── gap_classification.md
+│   │   │   └── teach_back_grading.md
+│   │   ├── routes/
+│   │   │   ├── session.py           # start session, get problem
+│   │   │   ├── submit.py            # receive Pyodide test results
+│   │   │   └── diagnose.py          # diagnostic loop endpoints
+│   │   └── db/
+│   │       ├── session_store.sqlite # gitignored, generated at runtime
+│   │       └── init_db.py
+│   └── tests/
+│       ├── test_traversal.py
+│       ├── test_llm_calls.py        # mocked Claude responses
+│       └── test_graph_loader.py
+│
+├── frontend/
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── tsconfig.json
+│   ├── index.html
+│   ├── public/
+│   │   └── pyodide/                 # or loaded via CDN, see architecture.md
+│   └── src/
+│       ├── main.tsx
+│       ├── App.tsx
+│       ├── api/
+│       │   └── client.ts            # typed fetch wrappers to backend
+│       ├── pyodide/
+│       │   ├── runtime.ts           # Pyodide init + code execution
+│       │   └── testRunner.ts        # runs student code vs. stored test cases
+│       ├── components/
+│       │   ├── CodeEditor.tsx       # Monaco wrapper
+│       │   ├── ConceptGraphView.tsx # React Flow graph, state-colored nodes
+│       │   ├── DiagnosticPanel.tsx  # probing question / lesson / teach-back
+│       │   └── ResultBanner.tsx     # pass/fail feedback
+│       ├── state/
+│       │   └── sessionStore.ts      # client-side session/flow state
+│       └── types/
+│           └── index.ts             # shared TS types mirroring Pydantic schemas
+│
+└── scripts/
+    ├── seed_graph.py                 # validates concept_graph.json against schema
+    └── record_demo_checklist.md      # Phase 5 checklist, ties to design.md §5

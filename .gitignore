@@ -1,0 +1,80 @@
+# ──────────────────────────────────────────────
+#  Prerequisite Gap Diagnoser — .gitignore
+# ──────────────────────────────────────────────
+
+# Ignore AI-team config directory (do not push to GitHub)
+.ai-team/
+
+# ── Python ────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.installed.cfg
+lib/
+lib64/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# ── Node / Frontend ───────────────────────────
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+dist/
+.next/
+out/
+build/
+*.local
+
+# ── Environment & Secrets ─────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+
+# ── Editor / IDE ──────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Testing & Coverage ────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Logs & Databases ──────────────────────────
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# ── Misc ──────────────────────────────────────
+*.bak
+*.tmp
+*.orig
