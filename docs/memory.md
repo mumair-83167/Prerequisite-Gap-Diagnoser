@@ -23,6 +23,8 @@ Append new entries here as they're made — don't overwrite history.
 | Sep 3 | All LLM diagnostic calls use structured/tool-use output, validated against known node IDs | Primary anti-hallucination guardrail (see rules.md §2) |
 | Sep 3 | Dev toolchain = Antigravity (primary, agentic) + VS Code (manual/debug) + GitHub Copilot (inline autocomplete) + Claude (planning/architecture, chat) | Matches user's actual workflow; `AGENTS.md` is the canonical context file Antigravity reads, with `CLAUDE.md` and `.github/copilot-instructions.md` as thin pointers so all tools stay in sync |
 | Sep 3 | Stack finalized: TypeScript/React/Vite/Monaco/React Flow (frontend), Python/FastAPI/Pydantic (backend), SQLite (session state), Pyodide (client-side code execution), Claude API tool-use (LLM calls) | See AGENTS.md for the full table; no substitutions without updating AGENTS.md + this log |
+| Sep 3 | Pyodide runtime via official CDN loader | Eliminates WASM bundler MIME/worker complexity in Vite; verified ~240ms execution |
+| Sep 3 | Implemented `.ssd/` governance directory | Standardized proposals across planned, active, and done states |
 
 ## Canonical documents (don't duplicate content — link/refer instead)
 - `prd.md` — what we're building and why, scope boundaries
@@ -47,3 +49,5 @@ Use this section as a running changelog so any future session (or a different AI
 
 - **Sep 3** — Hackathon selected (Prom Virgo Challenge), idea selected (Prerequisite Gap Diagnoser), domain locked to Python, architecture sketched, all five planning docs (prd/architecture/rules/phases/design) plus this memory file created. No code written yet — next session starts at Phase 0 (repo scaffold).
 - **Sep 3 (later)** — Toolchain locked in (Antigravity + VS Code + Copilot + Claude); created `AGENTS.md` (canonical, read by Antigravity), `CLAUDE.md` and `.github/copilot-instructions.md` (thin pointers to AGENTS.md). Still no application code written — next session starts at Phase 0 (repo scaffold), and should be run inside Antigravity so it picks up AGENTS.md automatically.
+- **Sep 3 (Phase 0 Complete)** — Executed Proposal `P000: Phase 0 — Core Scaffolding & Plumbing` through all 5 cycles. Built FastAPI backend with Pydantic v2 schemas and structured tool-use diagnostic route; created React + Vite + TypeScript frontend with Monaco Editor and client-side Pyodide WASM runner. All automated test suites passed (pytest 3/3 passed, npm production build passed). Browser subagent validated the end-to-end flow on `http://localhost:5173/` (passing code, failing code with recursion error, and backend diagnostic handshake). `P000` moved to `.ssd/done/`. Ready for Phase 1 (Content authoring).
+
