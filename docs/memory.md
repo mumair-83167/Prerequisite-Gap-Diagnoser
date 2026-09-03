@@ -25,6 +25,7 @@ Append new entries here as they're made — don't overwrite history.
 | Sep 3 | Stack finalized: TypeScript/React/Vite/Monaco/React Flow (frontend), Python/FastAPI/Pydantic (backend), SQLite (session state), Pyodide (client-side code execution), Claude API tool-use (LLM calls) | See AGENTS.md for the full table; no substitutions without updating AGENTS.md + this log |
 | Sep 3 | Pyodide runtime via official CDN loader | Eliminates WASM bundler MIME/worker complexity in Vite; verified ~240ms execution |
 | Sep 3 | Implemented `.ssd/` governance directory | Standardized proposals across planned, active, and done states |
+| Sep 3 | Project Profile: Prototype / Hackathon (via .ai-team) | Calibrates team rigor: focus on security baseline, anti-hallucination, and 1 demo path |
 
 ## Canonical documents (don't duplicate content — link/refer instead)
 - `prd.md` — what we're building and why, scope boundaries
