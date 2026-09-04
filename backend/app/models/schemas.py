@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal, List, Dict
+from typing import Optional, Literal, List, Dict, Any
 
 
 class HealthResponse(BaseModel):
@@ -76,3 +76,49 @@ class ConceptGraph(BaseModel):
         description="The primary scripted traversal path for video demonstrations"
     )
     nodes: List[ConceptNode] = Field(..., description="List of all concept nodes in the graph")
+
+
+# ── Diagnostic Engine Schemas (Phase 2) ───────────────────────────────────
+
+class ProbingQuestionResult(BaseModel):
+    concept_id: str = Field(..., description="Node ID being probed")
+    question: str = Field(..., description="Focused diagnostic question testing mastery signal")
+    is_mock: bool = Field(default=False)
+
+
+class ProbingAnswerRequest(BaseModel):
+    answer: str = Field(..., description="Learner's response to the probing question")
+
+
+class GapClassificationResult(BaseModel):
+    concept_id: str = Field(..., description="Node ID evaluated")
+    gap_detected: bool = Field(..., description="True if student has a gap on this prerequisite")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence score between 0.0 and 1.0")
+    reasoning: str = Field(..., description="Pedagogical justification grounded in mastery signal")
+    is_mock: bool = Field(default=False)
+
+
+class TeachBackRequest(BaseModel):
+    explanation: str = Field(..., description="Learner's explanation of the concept in their own words")
+
+
+class TeachBackGradingResult(BaseModel):
+    concept_id: str = Field(..., description="Node ID taught")
+    understood: bool = Field(..., description="True if explanation meets rubric criteria")
+    feedback: str = Field(..., description="Constructive pedagogical feedback")
+    rubric_points_met: List[str] = Field(default_factory=list, description="List of rubric criteria met")
+    is_mock: bool = Field(default=False)
+
+
+class SessionStateResponse(BaseModel):
+    session_id: str
+    state: str
+    target_node_id: str
+    diagnosed_gap_node_id: Optional[str] = None
+    current_candidate_node_id: Optional[str] = None
+    probing_question: Optional[str] = None
+    traversal_path: List[str]
+    mastered_nodes: List[str]
+    problem: Optional[SampleProblem] = None
+    micro_lesson: Optional[str] = None
+    history: List[Dict[str, Any]]

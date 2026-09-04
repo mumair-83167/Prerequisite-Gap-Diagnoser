@@ -27,6 +27,7 @@ Append new entries here as they're made — don't overwrite history.
 | Sep 3 | Implemented `.ssd/` governance directory | Standardized proposals across planned, active, and done states |
 | Sep 3 | Project Profile: Prototype / Hackathon (via .ai-team) | Calibrates team rigor: focus on security baseline, anti-hallucination, and 1 demo path |
 | Sep 3 | Concept graph finalized (21 nodes, 28 edges) and frozen | Hard freeze rule (§1) enforced; zero mid-build additions permitted |
+| Sep 4 | Diagnostic engine: formal 7-state FSM + bounded BFS (depth <= 3) + SQLite store | Guarantees deterministic state transitions, zero infinite loops, and persistence |
 
 ## Canonical documents (don't duplicate content — link/refer instead)
 - `prd.md` — what we're building and why, scope boundaries
@@ -43,7 +44,7 @@ Append new entries here as they're made — don't overwrite history.
 
 ## Open questions (resolve before the phase that needs them)
 - Exact wording of the recursion-path node content — resolved in Phase 1 (`concept_graph.json`).
-- Whether react-flow or custom SVG is used for the graph view — decide early Phase 3, don't block Phase 2 on this.
+- Whether react-flow or custom SVG is used for the graph view — resolved in favor of `@xyflow/react` for smooth state node styling and pan/zoom.
 - Fallback behavior if Claude API is slow during the live recording — decide during Phase 4 robustness pass.
 
 ## Session log
@@ -53,5 +54,7 @@ Use this section as a running changelog so any future session (or a different AI
 - **Sep 3 (later)** — Toolchain locked in (Antigravity + VS Code + Copilot + Claude); created `AGENTS.md` (canonical, read by Antigravity), `CLAUDE.md` and `.github/copilot-instructions.md` (thin pointers to AGENTS.md). Still no application code written — next session starts at Phase 0 (repo scaffold), and should be run inside Antigravity so it picks up AGENTS.md automatically.
 - **Sep 3 (Phase 0 Complete)** — Executed Proposal `P000: Phase 0 — Core Scaffolding & Plumbing` through all 5 cycles. Built FastAPI backend with Pydantic v2 schemas and structured tool-use diagnostic route; created React + Vite + TypeScript frontend with Monaco Editor and client-side Pyodide WASM runner. All automated test suites passed (pytest 3/3 passed, npm production build passed). Browser subagent validated the end-to-end flow on `http://localhost:5173/` (passing code, failing code with recursion error, and backend diagnostic handshake). `P000` moved to `.ssd/done/`. Ready for Phase 1 (Content authoring).
 - **Sep 3 (Phase 1 Complete)** — Executed Proposal `P001: Phase 1 — Content Authoring & Concept Graph Freezing` across all 4 cycles. Authored and froze the 21-node Python fundamentals concept graph (`concept_graph.json`); built DAG validation and caching engine (`loader.py`) and CLI reporting tool (`seed_graph.py`); automated pytest test suite passed 10/10. Bounded backward BFS reachability confirmed (<= 3 hops on demo path). Proposal `P001` moved to `.ssd/done/`. Ready for Phase 2 (Diagnostic state machine & bounded BFS engine).
+- **Sep 4 (Phase 2 Complete)** — Executed Proposal `P002: Phase 2 — Diagnostic State Machine & Bounded Traversal Engine` across all 5 cycles. Built SQLite session store (`init_db.py`, `db_models.py`), 7-state FSM (`state_machine.py`), bounded backward BFS engine (`traversal.py`), versioned prompt templates in `prompts/`, structured tool-use Claude engine (`llm_calls.py`), and FastAPI routers (`routes/session.py`, `routes/submit.py`, `routes/diagnose.py`). All automated test suites passed 22/22 (`pytest tests/`). Proposal `P002` moved to `.ssd/done/`. Ready for Phase 3 (Frontend integration & React Flow graph animation).
+
 
 

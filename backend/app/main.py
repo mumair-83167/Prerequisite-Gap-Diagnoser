@@ -1,19 +1,33 @@
 import json
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import anthropic
 
 from app.config import settings
+from app.db.init_db import init_db
+from app.graph.loader import graph_store
 from app.models.schemas import (
     HealthResponse,
     PlumbingTestRequest,
     PlumbingDiagnosticResult,
 )
+from app.routes import session, submit, diagnose
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Initialize SQLite DB and load concept graph
+    init_db()
+    graph_store.load()
+    yield
+
 
 app = FastAPI(
     title="Prerequisite Gap Diagnoser API",
     description="Backend API powering prerequisite graph traversal and diagnostic reasoning.",
-    version="0.1.0",
+    version="0.2.0",
+    lifespan=lifespan,
 )
 
 # CORS Middleware to support frontend Vite server on localhost
@@ -29,6 +43,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount Phase 2 Diagnostic Engine Routers
+app.include_router(session.router)
+app.include_router(submit.router)
+app.include_router(diagnose.router)
+
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
@@ -43,12 +62,7 @@ async def health_check():
 
 @app.post("/api/test-plumbing", response_model=PlumbingDiagnosticResult)
 async def test_plumbing(req: PlumbingTestRequest):
-    """
-    Phase 0 verification endpoint.
-    Receives code & test result from Pyodide client, invokes Claude API using forced
-    tool-use/structured output (or deterministic mock if unconfigured), and returns validated Pydantic model.
-    """
-    # Deterministic mock fallback for offline dev or missing API key
+    """Phase 0 verification endpoint (maintained for backwards compatibility)."""
     if settings.MOCK_LLM or not settings.ANTHROPIC_API_KEY:
         if req.test_status == "PASS":
             echo = "Client Pyodide execution verified: Code passed all assertions. Plumbing handshake successful."
@@ -62,7 +76,6 @@ async def test_plumbing(req: PlumbingTestRequest):
             is_mock=True,
         )
 
-    # Live Anthropic API structured call
     try:
         client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
         tool_definition = {
@@ -87,10 +100,7 @@ async def test_plumbing(req: PlumbingTestRequest):
             messages=[{"role": "user", "content": prompt}],
         )
 
-        # Extract tool input from response
-        tool_use_block = next(
-            (b for b in response.content if b.type == "tool_use"), None
-        )
+        tool_use_block = next((b for b in response.content if b.type == "tool_use"), None)
         if not tool_use_block:
             raise HTTPException(
                 status_code=502,
@@ -102,13 +112,9 @@ async def test_plumbing(req: PlumbingTestRequest):
         return PlumbingDiagnosticResult(**data)
 
     except anthropic.APIError as e:
-        raise HTTPException(
-            status_code=502, detail=f"Anthropic API error: {str(e)}"
-        )
+        raise HTTPException(status_code=502, detail=f"Anthropic API error: {str(e)}")
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal diagnostic error: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Internal diagnostic error: {str(e)}")
 
 
 if __name__ == "__main__":
